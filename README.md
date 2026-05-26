@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GS Generative AI - 1S 2026
 
-## Getting Started
+Assistente inteligente com arquitetura RAG para responder perguntas sobre documentos e dados da nova economia espacial: clima, satelites, agricultura inteligente, monitoramento ambiental, desastres naturais e exploracao espacial.
 
-First, run the development server:
+## Funcionalidades
+
+- Interface web em Next.js para upload de documentos e chat.
+- Leitura de arquivos `PDF`, `TXT` e `DOCX`.
+- Chunking de texto com sobreposicao.
+- Embeddings locais por hashing vetorial.
+- Vector store em memoria no navegador para demonstracao.
+- Busca semantica por similaridade cosseno.
+- Respostas generativas com Groq API e modelo Llama 70B.
+- Documentos de exemplo embutidos para demo imediata.
+
+## Como executar
+
+```bash
+npm install
+npm run dev
+```
+
+Acesse `http://localhost:3000`.
+
+## Variaveis de ambiente
+
+Crie um arquivo `.env.local`:
+
+```bash
+GROQ_API_KEY=sua_chave_groq
+GROQ_MODEL=llama-3.3-70b-versatile
+```
+
+Sem `GROQ_API_KEY`, a aplicacao ainda executa a recuperacao semantica e mostra as fontes recuperadas, mas informa que a chave da Groq precisa ser configurada para gerar a resposta final.
+
+## Fluxo RAG
+
+1. O usuario carrega documentos ou usa a base de exemplo.
+2. A rota `/api/ingest` extrai texto de PDF, TXT ou DOCX.
+3. O texto e normalizado e dividido em chunks.
+4. Cada chunk recebe um embedding local deterministico.
+5. A pergunta do usuario tambem vira embedding.
+6. A aplicacao recupera os chunks mais similares.
+7. A rota `/api/ask` envia pergunta e contexto recuperado ao modelo Groq.
+8. A resposta e exibida com as fontes usadas.
+
+## Documentos oficiais NASA/NOAA
+
+Para uma demonstracao mais completa, adicione PDFs ou textos oficiais em uma pasta local, por exemplo `data/external-docs`, e envie esses arquivos pela interface.
+
+Sugestoes de fontes:
+
+- NASA Earthdata
+- NASA Technical Reports Server
+- NOAA Climate.gov
+- Relatorios ambientais e climaticos publicos
+
+## Scripts
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Entregaveis
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Aplicacao funcional.
+- Repositorio organizado.
+- Documento tecnico em `docs/documento-tecnico.md`.
+- Roteiro do video demonstrativo em `docs/roteiro-video.md`.
