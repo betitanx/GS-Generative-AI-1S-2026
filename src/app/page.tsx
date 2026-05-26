@@ -6,10 +6,8 @@ import {
   BrainCircuit,
   CheckCircle2,
   FileText,
-  Globe2,
   Loader2,
   MessageSquare,
-  Radio,
   Satellite,
   Send,
   UploadCloud,
@@ -271,18 +269,6 @@ export default function Home() {
         <section className="flex min-h-screen flex-col p-4 sm:p-6 lg:p-8">
           <header className="mb-5 grid gap-3 md:grid-cols-[1fr_auto] md:items-center">
             <div>
-              <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
-                <span className="inline-flex items-center gap-1 rounded-md border border-white/10 px-2 py-1">
-                  <Globe2 size={13} />
-                  clima
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-md border border-white/10 px-2 py-1">
-                  <Radio size={13} />
-                  satélites
-                </span>
-                <span className="rounded-md border border-white/10 px-2 py-1">agricultura inteligente</span>
-                <span className="rounded-md border border-white/10 px-2 py-1">desastres naturais</span>
-              </div>
               <h2 className="max-w-3xl text-3xl font-semibold leading-tight tracking-normal sm:text-4xl">
                 Pergunte aos documentos da nova economia espacial.
               </h2>
