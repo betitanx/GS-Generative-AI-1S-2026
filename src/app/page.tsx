@@ -14,7 +14,7 @@ import {
   Send,
   UploadCloud,
 } from "lucide-react";
-import { FormEvent, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { type RagChunk, type RagSource } from "@/lib/rag";
 import { getSampleChunks, sampleDocuments } from "@/lib/sample-documents";
 
@@ -33,6 +33,13 @@ type ChatMessage = {
   sources?: RagSource[];
   model?: string;
   warning?: string;
+};
+
+type ApiStatus = {
+  groqConfigured: boolean;
+  openAIConfigured: boolean;
+  groqModel: string;
+  embeddingModel: string;
 };
 
 const sampleChunks = getSampleChunks();
@@ -59,6 +66,7 @@ export default function Home() {
   const [isUploading, setIsUploading] = useState(false);
   const [isAsking, setIsAsking] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  const [apiStatus, setApiStatus] = useState<ApiStatus | null>(null);
 
   const allChunks = useMemo(
     () => [...(useSamples ? sampleChunks : []), ...documents.flatMap((document) => document.chunks)],
@@ -66,6 +74,13 @@ export default function Home() {
   );
 
   const totalSources = (useSamples ? sampleDocuments.length : 0) + documents.length;
+
+  useEffect(() => {
+    fetch("/api/status")
+      .then((response) => response.json())
+      .then(setApiStatus)
+      .catch(() => setApiStatus(null));
+  }, []);
 
   async function handleUpload(files: FileList | null) {
     if (!files?.length) {
@@ -271,12 +286,26 @@ export default function Home() {
                 Pergunte aos documentos da nova economia espacial.
               </h2>
             </div>
-            <div className="rounded-lg border border-amber-200/25 bg-amber-200/10 px-4 py-3 text-sm text-amber-100">
+            <div
+              className={`rounded-lg border px-4 py-3 text-sm ${
+                apiStatus?.groqConfigured && apiStatus.openAIConfigured
+                  ? "border-emerald-200/25 bg-emerald-200/10 text-emerald-100"
+                  : "border-amber-200/25 bg-amber-200/10 text-amber-100"
+              }`}
+            >
               <div className="flex items-center gap-2 font-semibold">
-                <AlertCircle size={16} />
-                GROQ_API_KEY
+                {apiStatus?.groqConfigured && apiStatus.openAIConfigured ? (
+                  <CheckCircle2 size={16} />
+                ) : (
+                  <AlertCircle size={16} />
+                )}
+                APIs
               </div>
-              <p className="mt-1 text-xs text-amber-100/75">Sem chave, a busca retorna fontes e alerta de config.</p>
+              <p className="mt-1 text-xs opacity-75">
+                {apiStatus?.groqConfigured && apiStatus.openAIConfigured
+                  ? "Groq e OpenAI configuradas para geracao e embeddings."
+                  : "Configure Groq e OpenAI no .env.local para a demo completa."}
+              </p>
             </div>
           </header>
 
@@ -331,7 +360,9 @@ export default function Home() {
                 {[
                   "Extracao de texto: PDF, TXT e DOCX",
                   "Chunking com sobreposicao",
-                  "Embeddings locais por hashing vetorial",
+                  apiStatus?.openAIConfigured
+                    ? `Embeddings OpenAI (${apiStatus.embeddingModel})`
+                    : "Embeddings locais por hashing vetorial",
                   "Vector store em memoria no navegador",
                   "Busca por similaridade cosseno",
                   "Resposta generativa via Groq API",

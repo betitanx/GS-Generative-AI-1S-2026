@@ -1,7 +1,7 @@
 import mammoth from "mammoth";
 import { NextResponse } from "next/server";
 import { PDFParse } from "pdf-parse";
-import { createChunks, normalizeText, type RagChunk } from "@/lib/rag";
+import { createChunksWithEmbeddings, normalizeText, type RagChunk } from "@/lib/rag";
 
 export const runtime = "nodejs";
 
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     }
 
     const documentId = `upload-${Date.now()}-${documents.length + 1}`;
-    const chunks = createChunks(documentId, file.name, text);
+    const chunks = await createChunksWithEmbeddings(documentId, file.name, text);
 
     documents.push({
       id: documentId,

@@ -4,6 +4,8 @@ export type RagChunk = {
   documentName: string;
   text: string;
   embedding: number[];
+  embeddingProvider?: "local" | "openai";
+  embeddingModel?: string;
 };
 
 export type RagSource = {
@@ -84,21 +86,81 @@ export function createChunks(documentId: string, documentName: string, text: str
     documentName,
     text: chunk,
     embedding: embedText(chunk),
+    embeddingProvider: "local" as const,
+    embeddingModel: "local-hashing-vector",
   }));
 }
 
-export function retrieveRelevantChunks(question: string, chunks: RagChunk[], limit = 5) {
-  const questionEmbedding = embedText(question);
+export async function createChunksWithEmbeddings(documentId: string, documentName: string, text: string) {
+  const chunks = chunkText(text);
+
+  if (!process.env.OPENAI_API_KEY) {
+    return createChunks(documentId, documentName, text);
+  }
+
+  try {
+    const model = process.env.OPENAI_EMBEDDING_MODEL ?? "text-embedding-3-small";
+    const embeddings = await createOpenAIEmbeddings(chunks, model);
+
+    return chunks.map((chunk, index) => ({
+      id: `${documentId}-${index + 1}`,
+      documentId,
+      documentName,
+      text: chunk,
+      embedding: embeddings[index],
+      embeddingProvider: "openai" as const,
+      embeddingModel: model,
+    }));
+  } catch (error) {
+    console.warn("OpenAI embeddings unavailable; falling back to local vectors.", error);
+    return createChunks(documentId, documentName, text);
+  }
+}
+
+export async function retrieveRelevantChunks(question: string, chunks: RagChunk[], limit = 5) {
+  const localQuestionEmbedding = embedText(question);
+  const openAIQuestionEmbedding =
+    process.env.OPENAI_API_KEY && chunks.some((chunk) => chunk.embeddingProvider === "openai")
+      ? await createOpenAIEmbeddings([question], process.env.OPENAI_EMBEDDING_MODEL ?? "text-embedding-3-small")
+          .then(([embedding]) => embedding)
+          .catch(() => null)
+      : null;
 
   return chunks
-    .map((chunk) => ({
-      id: chunk.id,
-      documentName: chunk.documentName,
-      text: chunk.text,
-      score: cosineSimilarity(questionEmbedding, chunk.embedding),
-    }))
+    .map((chunk) => {
+      const questionEmbedding =
+        chunk.embeddingProvider === "openai" && openAIQuestionEmbedding ? openAIQuestionEmbedding : localQuestionEmbedding;
+
+      return {
+        id: chunk.id,
+        documentName: chunk.documentName,
+        text: chunk.text,
+        score: cosineSimilarity(questionEmbedding, chunk.embedding),
+      };
+    })
     .sort((a, b) => b.score - a.score)
     .slice(0, limit);
+}
+
+async function createOpenAIEmbeddings(input: string[], model: string) {
+  const response = await fetch("https://api.openai.com/v1/embeddings", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ model, input }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`OpenAI embeddings failed with status ${response.status}`);
+  }
+
+  const payload = (await response.json()) as {
+    data: Array<{ embedding: number[]; index: number }>;
+  };
+
+  return payload.data.sort((a, b) => a.index - b.index).map((item) => item.embedding);
 }
 
 export function embedText(text: string) {

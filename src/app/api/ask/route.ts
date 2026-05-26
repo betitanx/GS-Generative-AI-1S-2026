@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const sources = retrieveRelevantChunks(question, chunks, 5);
+  const sources = await retrieveRelevantChunks(question, chunks, 5);
 
   if (!process.env.GROQ_API_KEY) {
     return NextResponse.json(
