@@ -1,4 +1,7 @@
 # GS Generative AI - 1S 2026
+- Lucca Phelipe Masini (RM 564121)
+- Igor Paixão Sarak (RM 563726)
+- Bernardo Braga Perobeli (RM 562468)
 
 Assistente inteligente com arquitetura RAG para responder perguntas sobre documentos e dados da nova economia espacial: clima, satélites, agricultura inteligente, monitoramento ambiental, desastres naturais e exploração espacial.
 
