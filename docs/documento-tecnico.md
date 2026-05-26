@@ -2,32 +2,32 @@
 
 ## Problema escolhido
 
-Organizacoes, estudantes e equipes tecnicas que trabalham com a nova economia espacial precisam consultar documentos extensos sobre clima, satelites, agricultura inteligente, monitoramento ambiental, desastres naturais e exploracao espacial. A leitura manual desses materiais consome tempo e pode dificultar a tomada de decisao.
+Organizações, estudantes e equipes técnicas que trabalham com a nova economia espacial precisam consultar documentos extensos sobre clima, satélites, agricultura inteligente, monitoramento ambiental, desastres naturais e exploração espacial. A leitura manual desses materiais consome tempo e pode dificultar a tomada de decisão.
 
-A solucao proposta e um assistente inteligente com RAG que recupera trechos relevantes dos documentos antes de gerar uma resposta. Isso reduz respostas sem base documental e facilita o acesso ao conhecimento tecnico.
+A solução proposta é um assistente inteligente com RAG que recupera trechos relevantes dos documentos antes de gerar uma resposta. Isso reduz respostas sem base documental e facilita o acesso ao conhecimento técnico.
 
-## Arquitetura da solucao
+## Arquitetura da solução
 
-A aplicacao usa Next.js com rotas API para ingestao e pergunta. A interface envia arquivos para extracao de texto, recebe chunks vetorizados e mantem uma vector store em memoria no navegador. Quando o usuario faz uma pergunta, os chunks sao enviados para a API de pergunta, que faz a busca semantica e chama o modelo generativo da Groq com o contexto recuperado.
+A aplicação usa Next.js com rotas API para ingestão e pergunta. A interface envia arquivos para extração de texto, recebe chunks vetorizados e mantém uma vector store em memória no navegador. Quando o usuário faz uma pergunta, os chunks são enviados para a API de pergunta, que faz a busca semântica e chama o modelo generativo da Groq com o contexto recuperado.
 
 Fluxo resumido:
 
 1. Upload ou uso de documentos de exemplo.
-2. Extracao de texto de PDF, TXT ou DOCX.
+2. Extração de texto de PDF, TXT ou DOCX.
 3. Normalizacao e divisao em chunks.
-4. Geracao de embeddings com OpenAI quando configurado, ou fallback local por hashing vetorial.
+4. Geração de embeddings com OpenAI quando configurado, ou fallback local por hashing vetorial.
 5. Busca vetorial por similaridade cosseno.
 6. Montagem do prompt com os trechos mais relevantes.
-7. Geracao de resposta com Groq Llama 70B.
+7. Geração de resposta com Groq Llama 70B.
 8. Exibicao da resposta com fontes citadas.
 
 ## Ferramentas utilizadas
 
-- Next.js, React e TypeScript para aplicacao web.
+- Next.js, React e TypeScript para aplicação web.
 - Tailwind CSS para interface.
 - `pdf-parse` para extrair texto de PDFs.
 - `mammoth` para extrair texto de DOCX.
-- OpenAI Embeddings API para vetorizacao semantica dos uploads.
+- OpenAI Embeddings API para vetorização semântica dos uploads.
 - `groq-sdk` para chamada ao modelo generativo.
 - `lucide-react` para icones da interface.
 
@@ -37,9 +37,9 @@ O modelo generativo planejado e `llama-3.3-70b-versatile` via Groq API. A variav
 
 ## Vector store utilizada
 
-Para a demonstracao academica, a vector store e local e em memoria. Os documentos carregados sao mantidos no estado da aplicacao, junto com seus chunks e embeddings. Quando `OPENAI_API_KEY` esta configurada, uploads usam `text-embedding-3-small`; caso contrario, a aplicacao usa embeddings locais por hashing. Essa abordagem facilita a demonstracao e evita depender de banco externo.
+Para a demonstração acadêmica, a vector store é local e em memória. Os documentos carregados são mantidos no estado da aplicação, junto com seus chunks e embeddings. Quando `OPENAI_API_KEY` está configurada, uploads usam `text-embedding-3-small`; caso contrário, a aplicação usa embeddings locais por hashing. Essa abordagem facilita a demonstração e evita depender de banco externo.
 
-Em uma versao de producao, a vector store poderia ser substituida por Pinecone, Weaviate, Qdrant, Chroma, pgvector ou outro banco vetorial persistente.
+Em uma versão de produção, a vector store poderia ser substituída por Pinecone, Weaviate, Qdrant, Chroma, pgvector ou outro banco vetorial persistente.
 
 ## Fluxo RAG implementado
 
@@ -49,15 +49,15 @@ O fluxo RAG implementado segue o padrao Retrieval-Augmented Generation:
 - Augmentation: os trechos mais relevantes sao anexados ao prompt.
 - Generation: o modelo da Groq gera uma resposta em portugues usando o contexto recuperado.
 
-A resposta orienta o modelo a citar as fontes no formato `[Fonte 1]`, `[Fonte 2]` e a indicar limitacoes quando o contexto nao for suficiente.
+A resposta orienta o modelo a citar as fontes no formato `[Fonte 1]`, `[Fonte 2]` e a indicar limitações quando o contexto não for suficiente.
 
 ## Limitacoes
 
-- O fallback local por hashing serve para demonstracao, mas nao possui a mesma qualidade semantica de embeddings OpenAI.
-- A vector store em memoria e perdida ao recarregar a pagina.
-- PDFs escaneados como imagem podem nao ter texto extraivel sem OCR.
+- O fallback local por hashing serve para demonstração, mas não possui a mesma qualidade semântica de embeddings OpenAI.
+- A vector store em memória é perdida ao recarregar a página.
+- PDFs escaneados como imagem podem não ter texto extraível sem OCR.
 - A qualidade da resposta depende da chave Groq, do modelo selecionado e dos documentos enviados.
-- A aplicacao nao implementa autenticacao nem persistencia multiusuario.
+- A aplicação não implementa autenticação nem persistência multiusuário.
 
 ## Melhorias futuras
 

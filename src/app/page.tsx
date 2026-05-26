@@ -48,13 +48,13 @@ export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [useSamples, setUseSamples] = useState(true);
   const [documents, setDocuments] = useState<UploadedDocument[]>([]);
-  const [question, setQuestion] = useState("Como satelites ajudam no monitoramento de desastres naturais?");
+  const [question, setQuestion] = useState("Como satélites ajudam no monitoramento de desastres naturais?");
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome",
       role: "assistant",
       content:
-        "Envie documentos ou use a base de exemplo e pergunte sobre clima, satelites, agricultura inteligente, monitoramento ambiental ou exploracao espacial.",
+        "Envie documentos ou use a base de exemplo e pergunte sobre clima, satélites, agricultura inteligente, monitoramento ambiental ou exploração espacial.",
       sources: sampleChunks.slice(0, 2).map((chunk) => ({
         id: chunk.id,
         documentName: chunk.documentName,
@@ -98,16 +98,17 @@ export default function Home() {
         method: "POST",
         body: formData,
       });
-      const payload = await response.json();
+      const payload = await readJsonResponse(response);
 
       if (!response.ok) {
-        throw new Error(payload.error ?? "Falha ao processar arquivos.");
+        throw new Error(payload.error ?? "Falha ao processar arquivo.");
       }
 
       setDocuments((current) => [...current, ...payload.documents]);
-      setStatus(`${payload.documents.length} documento(s) indexado(s) com sucesso.`);
+      const warning = payload.warnings?.length ? ` Aviso: ${payload.warnings.join(" ")}` : "";
+      setStatus(`${payload.documents.length} documento(s) indexado(s) com sucesso.${warning}`);
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Falha ao processar arquivos.");
+      setStatus(error instanceof Error ? error.message : "Falha ao processar arquivo.");
     } finally {
       setIsUploading(false);
       if (inputRef.current) {
@@ -141,7 +142,7 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: currentQuestion, chunks: allChunks }),
       });
-      const payload = await response.json();
+      const payload = await readJsonResponse(response);
 
       setMessages((current) => [
         ...current,
@@ -150,7 +151,7 @@ export default function Home() {
           role: "assistant",
           content:
             payload.answer ??
-            "Nao consegui gerar a resposta agora, mas estes sao os trechos mais relevantes recuperados.",
+            "Não consegui gerar a resposta agora, mas estes são os trechos mais relevantes recuperados.",
           sources: payload.sources,
           model: payload.model,
           warning: response.ok ? undefined : payload.error,
@@ -162,7 +163,7 @@ export default function Home() {
         {
           id: crypto.randomUUID(),
           role: "assistant",
-          content: "Nao foi possivel consultar a API agora.",
+          content: "Não foi possível consultar a API agora.",
           warning: error instanceof Error ? error.message : "Erro desconhecido.",
         },
       ]);
@@ -211,7 +212,7 @@ export default function Home() {
             )}
             <span className="text-sm font-semibold">Upload de PDF, TXT ou DOCX</span>
             <span className="mt-1 text-xs leading-5 text-slate-400">
-              O texto sera extraido, dividido em chunks e indexado em vetores locais.
+              O texto será extraído, dividido em chunks e indexado em vetores semânticos.
             </span>
           </button>
 
@@ -277,7 +278,7 @@ export default function Home() {
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-md border border-white/10 px-2 py-1">
                   <Radio size={13} />
-                  satelites
+                  satélites
                 </span>
                 <span className="rounded-md border border-white/10 px-2 py-1">agricultura inteligente</span>
                 <span className="rounded-md border border-white/10 px-2 py-1">desastres naturais</span>
@@ -303,7 +304,7 @@ export default function Home() {
               </div>
               <p className="mt-1 text-xs opacity-75">
                 {apiStatus?.groqConfigured && apiStatus.openAIConfigured
-                  ? "Groq e OpenAI configuradas para geracao e embeddings."
+                  ? "Groq e OpenAI configuradas para geração e embeddings."
                   : "Configure Groq e OpenAI no .env.local para a demo completa."}
               </p>
             </div>
@@ -316,7 +317,7 @@ export default function Home() {
                   <MessageSquare size={17} className="text-cyan-200" />
                   Chat RAG
                 </div>
-                <span className="text-xs text-slate-400">Groq Llama 70B + recuperacao semantica local</span>
+                <span className="text-xs text-slate-400">Groq Llama 70B + recuperação semântica</span>
               </div>
 
               <div className="flex-1 space-y-4 overflow-y-auto p-4">
@@ -358,12 +359,12 @@ export default function Home() {
               </div>
               <div className="space-y-3 text-sm text-slate-300">
                 {[
-                  "Extracao de texto: PDF, TXT e DOCX",
-                  "Chunking com sobreposicao",
+                  "Extração de texto: PDF, TXT e DOCX",
+                  "Chunking com sobreposição",
                   apiStatus?.openAIConfigured
                     ? `Embeddings OpenAI (${apiStatus.embeddingModel})`
                     : "Embeddings locais por hashing vetorial",
-                  "Vector store em memoria no navegador",
+                  "Vector store em memória no navegador",
                   "Busca por similaridade cosseno",
                   "Resposta generativa via Groq API",
                 ].map((item) => (
@@ -419,7 +420,7 @@ function ChatBubble({ message }: { message: ChatMessage }) {
       >
         <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
           {isAssistant ? <Bot size={14} /> : <MessageSquare size={14} />}
-          {isAssistant ? "Assistente" : "Voce"}
+          {isAssistant ? "Assistente" : "Você"}
           {message.model ? <span className="normal-case tracking-normal text-cyan-200">{message.model}</span> : null}
         </div>
         {message.warning ? (
@@ -446,4 +447,18 @@ function ChatBubble({ message }: { message: ChatMessage }) {
       </div>
     </article>
   );
+}
+
+async function readJsonResponse(response: Response) {
+  const text = await response.text();
+
+  if (!text) {
+    return { error: "A API não retornou conteúdo. Tente um arquivo menor ou verifique o terminal do servidor." };
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { error: text.slice(0, 240) || "Resposta inválida da API." };
+  }
 }

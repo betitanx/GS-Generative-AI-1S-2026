@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error:
-          "GROQ_API_KEY nao configurada. Crie um arquivo .env.local com sua chave da Groq para gerar respostas.",
+          "GROQ_API_KEY não configurada. Crie um arquivo .env.local com sua chave da Groq para gerar respostas.",
         sources,
       },
       { status: 503 },
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
       {
         role: "system",
         content:
-          "Voce e um assistente academico de IA generativa com RAG. Responda em portugues do Brasil, use apenas o contexto fornecido quando ele for suficiente, indique limitacoes quando faltar evidencia e cite as fontes recuperadas no formato [Fonte 1].",
+          "Você é um assistente acadêmico de IA generativa com RAG. Responda em português do Brasil, use apenas o contexto fornecido quando ele for suficiente, indique limitações quando faltar evidência e cite as fontes recuperadas no formato [Fonte 1].",
       },
       {
         role: "user",
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
   });
 
   return NextResponse.json({
-    answer: completion.choices[0]?.message?.content?.trim() ?? "Nao foi possivel gerar uma resposta.",
+    answer: completion.choices[0]?.message?.content?.trim() ?? "Não foi possível gerar uma resposta.",
     model,
     sources,
   });
