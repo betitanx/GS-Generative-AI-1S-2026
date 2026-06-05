@@ -9,7 +9,7 @@ Assistente inteligente com arquitetura RAG para responder perguntas sobre docume
 
 - Interface web em Next.js para upload de documentos e chat.
 - Leitura de arquivos `PDF`, `TXT` e `DOCX`.
-- Chunking de texto com sobreposicao.
+- Chunking de texto com sobreposição.
 - Embeddings OpenAI para uploads, com fallback local por hashing vetorial.
 - Vector store em memória no navegador para demonstração.
 - Busca semântica por similaridade cosseno.
@@ -25,7 +25,7 @@ npm run dev
 
 Acesse `http://localhost:3000`.
 
-## Variaveis de ambiente
+## Variáveis de ambiente
 
 Crie um arquivo `.env.local`:
 
@@ -42,23 +42,23 @@ Sem `GROQ_API_KEY`, a aplicação ainda executa a recuperação semântica e mos
 
 1. O usuário carrega documentos ou usa a base de exemplo.
 2. A rota `/api/ingest` extrai texto de PDF, TXT ou DOCX.
-3. O texto e normalizado e dividido em chunks.
+3. O texto é normalizado e dividido em chunks.
 4. Cada chunk recebe embedding OpenAI quando configurado, ou embedding local determinístico como fallback.
 5. A pergunta do usuário também vira embedding.
 6. A aplicação recupera os chunks mais similares.
 7. A rota `/api/ask` envia pergunta e contexto recuperado ao modelo Groq.
-8. A resposta e exibida com as fontes usadas.
+8. A resposta é exibida com as fontes usadas.
 
 ## Documentos oficiais NASA/NOAA
 
 Para uma demonstração mais completa, adicione PDFs ou textos oficiais em uma pasta local, por exemplo `data/external-docs`, e envie esses arquivos pela interface.
 
-Sugestoes de fontes:
+Sugestões de fontes:
 
 - NASA Earthdata
 - NASA Technical Reports Server
 - NOAA Climate.gov
-- Relatorios ambientais e climaticos publicos
+- Relatórios ambientais e climáticos públicos
 
 ## Scripts
 
@@ -68,9 +68,9 @@ npm run build
 npm run lint
 ```
 
-## Entregaveis
+## Entregáveis
 
-- Aplicacao funcional.
-- Repositorio organizado.
+- Aplicação funcional.
+- Repositório organizado.
 - Documento técnico em `docs/documento-tecnico.md`.
-- Roteiro do video demonstrativo em `docs/roteiro-video.md`.
+- Roteiro do vídeo demonstrativo em `docs/roteiro-video.md`.

@@ -19,11 +19,11 @@ export const sampleDocuments = [
   {
     id: "sample-disasters",
     name: "Monitoramento ambiental e desastres.txt",
-    text: "Em enchentes, secas, queimadas e deslizamentos, dados espaciais permitem detectar areas afetadas, comparar imagens antes e depois do evento e orientar equipes de defesa civil. Um assistente RAG reduz alucinacoes ao recuperar trechos relevantes antes de gerar uma resposta em linguagem natural.",
+    text: "Em enchentes, secas, queimadas e deslizamentos, dados espaciais permitem detectar áreas afetadas, comparar imagens antes e depois do evento e orientar equipes de defesa civil. Um assistente RAG reduz alucinações ao recuperar trechos relevantes antes de gerar uma resposta em linguagem natural.",
   },
   {
     id: "sample-exploration",
-    name: "Exploracao espacial e pesquisa.txt",
+    name: "Exploração espacial e pesquisa.txt",
     text: "Missões de exploração espacial produzem documentos sobre trajetórias, instrumentação, geologia planetária, radiação e habitabilidade. Consultar esses documentos com busca vetorial permite que estudantes encontrem rapidamente conceitos e limitações sem ler relatórios extensos por completo.",
   },
 ];

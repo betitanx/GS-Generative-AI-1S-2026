@@ -1,6 +1,6 @@
-# Roteiro do video demonstrativo
+# Roteiro do vídeo demonstrativo
 
-Tempo maximo: 5 minutos.
+Tempo máximo: 5 minutos.
 
 ## 1. Abertura - 30s
 
@@ -14,13 +14,13 @@ Mostrar o fluxo:
 
 1. Upload ou documentos de exemplo.
 2. Extração de texto.
-3. Divisao em chunks.
+3. Divisão em chunks.
 4. Geração de embeddings.
 5. Vector store local.
-6. Recuperacao dos trechos mais similares.
+6. Recuperação dos trechos mais similares.
 7. Resposta com modelo Groq Llama 70B.
 
-## 3. Demonstracao pratica - 2min
+## 3. Demonstração prática - 2min
 
 Abrir a aplicação local.
 
@@ -43,6 +43,6 @@ Citar:
 - embeddings locais;
 - Groq API.
 
-## 5. Limitacoes e melhorias - 45s
+## 5. Limitações e melhorias - 45s
 
 Explicar que a versão atual usa vector store em memória e embeddings locais para demonstração. Como melhorias, citar banco vetorial persistente, embeddings especializados, OCR e filtros avançados.
