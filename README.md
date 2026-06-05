@@ -73,4 +73,5 @@ npm run lint
 - Aplicação funcional.
 - Repositório organizado.
 - Documento técnico em `docs/documento-tecnico.md`.
+- Documento técnico em PDF em `docs/documento-tecnico.pdf`.
 - Roteiro do vídeo demonstrativo em `docs/roteiro-video.md`.
